@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import Header from './components/Header';
+import FileUploadDashboard from './components/FileUploadDashboard';
+import DataPreview from './components/DataPreview';
+import QueryBox from './components/QueryBox';
+import ResultBox from './components/ResultBox';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [data, setData] = useState(null);
+  const [queryResult, setQueryResult] = useState(null);
+
+  const handleDataUpload = (uploadedData) => {
+    setData(uploadedData);
+  };
+
+  const handleQuerySubmit = async (query) => {
+    try {
+      // Replace with actual API endpoint when available
+      const response = await fetch('https://api.example.com/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, data }),
+      });
+      const result = await response.json();
+      setQueryResult(result);
+    } catch (error) {
+      console.error('Error fetching query result:', error);
+      setQueryResult({ error: 'Failed to fetch data' });
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gray-100">
+      <Header />
+      <div className="container mx-auto p-6">
+        <FileUploadDashboard onDataUpload={handleDataUpload} />
+        {data && <DataPreview data={data} />}
+        <QueryBox onQuerySubmit={handleQuerySubmit} />
+        <ResultBox result={queryResult} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default App
+export default App;
