@@ -13,29 +13,13 @@ const App = () => {
     setData(uploadedData);
   };
 
-  const handleQuerySubmit = async (query) => {
-    try {
-      // Replace with actual API endpoint when available
-      const response = await fetch('https://api.example.com/query', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, data }),
-      });
-      const result = await response.json();
-      setQueryResult(result);
-    } catch (error) {
-      console.error('Error fetching query result:', error);
-      setQueryResult({ error: 'Failed to fetch data' });
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
       <div className="container mx-auto p-6">
         <FileUploadDashboard onDataUpload={handleDataUpload} />
         {data && <DataPreview data={data} />}
-        <QueryBox onQuerySubmit={handleQuerySubmit} />
+        <QueryBox onQueryResult={setQueryResult} />
         <ResultBox result={queryResult} />
       </div>
     </div>

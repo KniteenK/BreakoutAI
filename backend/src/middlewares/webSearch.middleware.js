@@ -3,10 +3,10 @@ import asyncHandler from '../utils/asyncHandler.js';
 import apiResponse from '../utils/apiResponse.js';
 import apiError from '../utils/apiError.js';
 
-const webSearch = asyncHandler ( async (req, res) => {
+const webSearch = asyncHandler ( async (req, res, next) => {
     const {query} = req.body ;
 
-    console.log(req.body) ;
+    // console.log(req.body) ;
 
     try {
         const result = await getJson({
@@ -18,11 +18,12 @@ const webSearch = asyncHandler ( async (req, res) => {
             api_key: process.env.SERPAPI_KEY
         })
         
-        console.log(result) ;
-        
-        return res.
-        status(200).
-        json( new apiResponse(200, {result, query}, "Fetched results"))
+        // console.log(result) ;
+
+        req.webSearchResult = result;
+        req.queryText = query;
+
+        next()
     } catch (error) {
         throw new apiError("error: ", error)
     }
