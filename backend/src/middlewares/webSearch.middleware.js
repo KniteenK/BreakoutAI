@@ -3,7 +3,7 @@ import asyncHandler from '../utils/asyncHandler.js';
 import apiResponse from '../utils/apiResponse.js';
 import apiError from '../utils/apiError.js';
 
-const webSearch = asyncHandler ( async (req, res, next) => {
+const webSearch = asyncHandler ( async (req, _, next) => {
     const {query} = req.body ;
 
     // console.log(req.body) ;

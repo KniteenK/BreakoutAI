@@ -1,50 +1,39 @@
 import React, { useState } from 'react';
+import QueryBox from './QueryBox';
+import DataPreview from './DataPreview';
 
-const FileUploadDashboard = ({ onDataUpload }) => {
+const FileUploadDashboard = ({ onQueryResult }) => {
   const [file, setFile] = useState(null);
+  const [previewData, setPreviewData] = useState(null);
 
   const handleFileChange = (event) => {
     const uploadedFile = event.target.files[0];
-    if (uploadedFile) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const text = e.target.result;
-        const parsedData = text.split('\n').map((row) => row.split(','));
-        onDataUpload({ columns: parsedData[0], rows: parsedData.slice(1) });
-      };
-      reader.readAsText(uploadedFile);
-      setFile(uploadedFile);
-    }
-  };
+    setFile(uploadedFile);
 
-  const handleGoogleConnect = () => {
-    // Simulate Google Sheets connection logic
-    alert('Google Sheets connection not implemented.');
+    // Parse CSV file for preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result;
+      const [columns, ...rows] = text.split('\n').map((line) => line.split(','));
+      setPreviewData({ columns, rows });
+    };
+    reader.readAsText(uploadedFile);
   };
 
   return (
-    <div className="bg-white shadow rounded p-6">
+    <div className="bg-white shadow rounded p-6 mb-6">
       <h2 className="text-xl font-semibold mb-4">Upload Data</h2>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <label className="block text-gray-700 mb-2">Upload CSV:</label>
-          <input
-            type="file"
-            accept=".csv"
-            onChange={handleFileChange}
-            className="w-full p-2 border rounded"
-          />
-          {file && <p className="text-sm text-gray-500 mt-2">Uploaded: {file.name}</p>}
-        </div>
-        <div className="flex-1">
-          <button
-            onClick={handleGoogleConnect}
-            className="mt-4 md:mt-0 p-2 w-full bg-green-500 text-white rounded"
-          >
-            Connect Google Sheets
-          </button>
-        </div>
-      </div>
+      <input
+        type="file"
+        accept=".csv"
+        onChange={handleFileChange}
+        className="w-full p-2 border rounded mb-4"
+      />
+      {file && <p className="text-sm text-gray-500">Uploaded: {file.name}</p>}
+
+      {previewData && <DataPreview data={previewData} />}
+
+      {file && <QueryBox onQueryResult={onQueryResult} uploadedFile={file} />}
     </div>
   );
 };
